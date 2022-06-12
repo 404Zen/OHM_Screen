@@ -63,11 +63,11 @@ void st7789_init(void)
         {ST7789_CABCCTRL, {0xBE}, 1},
         {ST7789_MADCTL, {0x00}, 1}, // Set to 0x28 if your display is flipped
         {ST7789_COLMOD, {0x55}, 1},
-
+        {ST7789_INVON, {0}, 0}, // set inverted mode
 #if ST7789_INVERT_COLORS == 1
-		{ST7789_INVON, {0}, 0}, // set inverted mode
+		
 #else
- 		{ST7789_INVOFF, {0}, 0}, // set non-inverted mode
+ 		// {ST7789_INVOFF, {0}, 0}, // set non-inverted mode
 #endif
 
         {ST7789_RGBCTRL, {0x00, 0x1B}, 2},
@@ -77,6 +77,7 @@ void st7789_init(void)
         {ST7789_NVGAMCTRL, {0xD0, 0x00, 0x02, 0x07, 0x0A, 0x28, 0x31, 0x54, 0x47, 0x0E, 0x1C, 0x17, 0x1B, 0x1E}, 14},
         {ST7789_CASET, {0x00, 0x00, 0x00, 0xEF}, 4},
         {ST7789_RASET, {0x00, 0x00, 0x01, 0x3f}, 4},
+        {ST7789_RAMCTRL,{0x00, 0xC8}, 2},
         {ST7789_RAMWR, {0}, 0},
         {ST7789_GCTRL, {0x07}, 1},
         {0xB6, {0x0A, 0x82, 0x27, 0x00}, 4},
@@ -124,7 +125,7 @@ void st7789_init(void)
 
     st7789_enable_backlight(true);
 
-    st7789_set_orientation(CONFIG_LV_DISPLAY_ORIENTATION);
+    st7789_set_orientation(2);
 }
 
 void st7789_enable_backlight(bool backlight)

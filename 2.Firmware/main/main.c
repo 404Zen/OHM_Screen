@@ -38,10 +38,11 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
     /* Initialize WiFi */
     wifi_init();
+
     /* LVGL */
-    xTaskCreatePinnedToCore(gui_task, "gui task", 1024 * 4, NULL, 1, NULL, 0);
+    xTaskCreatePinnedToCore(gui_task, "gui task", 1024 * 4, NULL, 2, NULL, 0);
     /* Encoder */
-    xTaskCreate(encoder_task, "encoder_task", 2048, NULL, 3, NULL);
+    // xTaskCreate(encoder_task, "encoder_task", 2048, NULL, 3, NULL);
     /* OHM data parase */
     xTaskCreate(tc_ohm_data_refresh, "tc_ohm_data_refresh", 4096, NULL, 5, NULL);
 }

@@ -1,17 +1,13 @@
-# LVGL TEMPLATE
-Basic template for ili9341 driver and esp32.
+# Project
 
-## About ESP32
-
-* board: ESP32-WROOM
+* board: ESP32
 * flash size: 4MB
-* esp-idf: v4.2.1
+* esp-idf: v4.4.1
 
 ## About LCD TFT
 
-* LCD driver: ILI9341
-* LCD module: 2.8 TFT SPI 240x320 v1.2
-* Touch driver: XPT2046
+* LCD driver: ST7789
+* LCD module: 1.3 TFT SPI 240x320
 
 <img src="assets/lcd.PNG" width="75%" > </img>
 
@@ -25,19 +21,15 @@ Basic template for ili9341 driver and esp32.
 
 | module TFT   | ESP32    |
 | ---          | ---      |
-| T IRQ        |  gpio 25 |
-| T DO  (MISO) |  gpio 19 |
-| T DIN (MOSI) |  gpio 23 |
-| T CS         |  gpio 5  |
-| T CLK        |  gpio 18 |
-| SDO (MISO)   |  NC      |
-| LED          |  gpio 27 |
-| SCK          |  gpio 14 |
-| SDI (MOSI)   |  gpio 13 |
+| SDA (MOSI)   |  gpio 23 |
+| SCK          |  gpio 18 |
+| BLK          |  gpio 12 |
 | DC           |  gpio 2  |
 | RESET        |  gpio 4  |
-| CS           |  gpio 15 |
-| GND          |  GND     |
-| VCC (5v)     |  NC      |
+| CS           |  gpio NC |
 
-* Used 10cm length wires
+
+##  其他记录
+    -   增加timer task stack到4096.
+    -   lvgl颜色还没有配置正确 BGR->RGB, 初始化添加 `{ST7789_RAMCTRL,{0x00, 0xC8}, 2},` 开启颜色反转
+    -   lvgl demo.

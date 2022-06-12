@@ -8,6 +8,8 @@
 ***********************************************************************/
 
 /*Include-------------------------------------------------------------*/
+#include <stdlib.h>
+
 #include "tc_parse_ohm.h" 
 
 #include "freertos/FreeRTOS.h"
@@ -19,6 +21,7 @@
 #include "user_smartconfig.h"
 #include "user_http_request.h"
 #include "ohm_data_parse.h"
+#include "gui_task.h"
 
 
 
@@ -62,6 +65,10 @@ static void vTimerCallback_ohm_refresh( TimerHandle_t xTimer )
             printf("|---Load        : %s.\r\n", ohm_data->cpu[i].load);
             printf("|---Temperture  : %s.\r\n", ohm_data->cpu[i].temp);
             printf("|---Power       : %s.\r\n", ohm_data->cpu[i].power);
+
+            int16_t cpu_load = 0;
+            cpu_load = atoi(ohm_data->cpu[i].load);
+            set_cpu_load_arc(cpu_load);
         }
 
         {
