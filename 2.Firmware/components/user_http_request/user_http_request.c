@@ -133,7 +133,7 @@ esp_err_t http_stream_reader(char *buffer, uint32_t buffer_size)
 
     if(content_length > buffer_size)
     {
-        ESP_LOGE(TAG, "data len > buffer len");
+        ESP_LOGE(TAG, "data len > buffer len, %d > %d...", content_length, buffer_size);
         return 2;
     }
 

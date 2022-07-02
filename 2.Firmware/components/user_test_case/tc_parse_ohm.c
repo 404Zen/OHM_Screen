@@ -9,6 +9,7 @@
 
 /*Include-------------------------------------------------------------*/
 #include <stdlib.h>
+#include <string.h>
 
 #include "tc_parse_ohm.h" 
 
@@ -32,7 +33,18 @@
 TimerHandle_t xTimer_ohm_refresh;
 char ohm_raw_data[2048];                /* according by your hardware, must be greater than the json data length */
 
-
+extern info_label_t pc_name;
+extern info_label_t cpu_name;
+extern info_label_t cpu_clock;
+extern info_label_t cpu_load;
+extern info_label_t cpu_temp;
+extern info_label_t gpu_name;
+extern info_label_t gpu_clock;
+extern info_label_t gpu_load;
+extern info_label_t gpu_temp;
+extern info_label_t memory;
+extern info_label_t hdd0;
+extern info_label_t hdd1;
 /*Function prototypes-------------------------------------------------*/
 static void vTimerCallback_ohm_refresh( TimerHandle_t xTimer );
 /*User code-----------------------------------------------------------*/
@@ -44,6 +56,7 @@ static void vTimerCallback_ohm_refresh( TimerHandle_t xTimer );
 */
 static void vTimerCallback_ohm_refresh( TimerHandle_t xTimer )
 {
+    char strbuf[256];
     /* Optionally do something if the pxTimer parameter is NULL. */
     configASSERT( xTimer );
 
@@ -57,18 +70,40 @@ static void vTimerCallback_ohm_refresh( TimerHandle_t xTimer )
         ohm_data = get_ohm_data();
         
         printf("PC : %s .\r\n", ohm_data->pc_name);
+        refresh_label_text(&pc_name, &(ohm_data->pc_name));
         printf("Mainboard : %s .\r\n", ohm_data->main_board_name);
         for (size_t i = 0; i < CPU_NUMS; i++)
-        {
+        {   
+            memset(strbuf, 0, sizeof(strbuf));
+            sprintf(strbuf, "CPU%d : %s",i, ohm_data->cpu[i].name);
+            refresh_label_text(&cpu_name, &strbuf);
             printf("CPU%d : %s.\r\n", i, ohm_data->cpu[i].name);
+            
+            
             printf("|---Clock       : %s.\r\n", ohm_data->cpu[i].clock);
+            memset(strbuf, 0, sizeof(strbuf));
+            sprintf(strbuf, "Clock : %s", ohm_data->cpu[i].clock);
+            refresh_label_text(&cpu_clock, &strbuf);
+
+
             printf("|---Load        : %s.\r\n", ohm_data->cpu[i].load);
+            memset(strbuf, 0, sizeof(strbuf));
+            sprintf(strbuf, "Load : %s", ohm_data->cpu[i].load);
+            refresh_label_text(&cpu_load, &strbuf);
+
+
             printf("|---Temperture  : %s.\r\n", ohm_data->cpu[i].temp);
             printf("|---Power       : %s.\r\n", ohm_data->cpu[i].power);
+            memset(strbuf, 0, sizeof(strbuf));
+            sprintf(strbuf, "Temperture : %s", ohm_data->cpu[i].temp);
+            // sprintf(strbuf, "Temperture : %s; Power : %s;", ohm_data->cpu[i].temp, ohm_data->cpu[i].power);
+            refresh_label_text(&cpu_temp, &strbuf);
+
+            
 
             int16_t cpu_load = 0;
             cpu_load = atoi(ohm_data->cpu[i].load);
-            set_cpu_load_arc(cpu_load);
+            // set_cpu_load_arc(cpu_load);
         }
 
         {
@@ -76,18 +111,41 @@ static void vTimerCallback_ohm_refresh( TimerHandle_t xTimer )
             printf("|---Load        : %s.\r\n", ohm_data->ram.load);
             printf("|---Used        : %s.\r\n", ohm_data->ram.used);
             printf("|---Free        : %s.\r\n", ohm_data->ram.free);
+            memset(strbuf, 0, sizeof(strbuf));
+            // sprintf(strbuf, "%s : Load %s; Used : %s; Free : %s;", ohm_data->ram.name, ohm_data->ram.load, ohm_data->ram.used, ohm_data->ram.free);
+            sprintf(strbuf, "%s : Load %s", ohm_data->ram.name, ohm_data->ram.load);
+            refresh_label_text(&memory, &strbuf);
         }
 
         for (size_t i = 0; i < GPU_NUMS; i++)
         {
             printf("GPU%d : %s.\r\n", i, ohm_data->gpu[i].name);
+            memset(strbuf, 0, sizeof(strbuf));
+            sprintf(strbuf, "%s", ohm_data->gpu[i].name);
+            refresh_label_text(&gpu_name, &strbuf);
+
             printf("|---Clock       : %s.\r\n", ohm_data->gpu[i].clock);
             printf("|---Load        : %s.\r\n", ohm_data->gpu[i].load);
+            memset(strbuf, 0, sizeof(strbuf));
+            // sprintf(strbuf, "Clock : %s; Load : %s", ohm_data->gpu[i].clock, ohm_data->gpu[i].load);
+            sprintf(strbuf, "Clock : %s", ohm_data->gpu[i].clock);
+            refresh_label_text(&gpu_clock, &strbuf);
+
+
             printf("|---Temperture  : %s.\r\n", ohm_data->gpu[i].temp);
             printf("|---Power       : %s.\r\n", ohm_data->gpu[i].power);
+            memset(strbuf, 0, sizeof(strbuf));
+            // sprintf(strbuf, "Temperture : %s; Power : %s", ohm_data->gpu[i].temp, ohm_data->gpu[i].power);
+            sprintf(strbuf, "Temperture : %s", ohm_data->gpu[i].temp);
+            refresh_label_text(&gpu_temp, &strbuf);
+
             printf("|---Mem_used    : %s.\r\n", ohm_data->gpu[i].mem_used);
             printf("|---Mem_free    : %s.\r\n", ohm_data->gpu[i].mem_free);
             printf("|---Mem_total   : %s.\r\n", ohm_data->gpu[i].mem_total);
+            memset(strbuf, 0, sizeof(strbuf));
+            // sprintf(strbuf, "Mem used : %s; Mem free : %s", ohm_data->gpu[i].mem_used, ohm_data->gpu[i].mem_free);
+            sprintf(strbuf, "Load : %s", ohm_data->gpu[i].load);
+            refresh_label_text(&gpu_load, &strbuf);
         }
 
         for (size_t i = 0; i < HDD_NUMS; i++)
@@ -95,6 +153,18 @@ static void vTimerCallback_ohm_refresh( TimerHandle_t xTimer )
             printf("HDD%d : %s.(Include SSD Here. But can't get SSD temperture now)\r\n", i, ohm_data->hdd[i].name);
             printf("|---Temperture  : %s.\r\n", ohm_data->hdd[i].temp);
             printf("|---Usage       : %s.\r\n", ohm_data->hdd[i].usage);
+            if(i == 0)
+            {
+                memset(strbuf, 0, sizeof(strbuf));
+                sprintf(strbuf, "HDD%d;Temp:%s;Usage:%s", i, ohm_data->hdd[i].temp, ohm_data->hdd[i].usage);
+                refresh_label_text(&hdd0, &strbuf);
+            }
+            else if(i == 1)
+            {
+                memset(strbuf, 0, sizeof(strbuf));
+                sprintf(strbuf, "HDD%d;Temp:%s;Usage:%s", i, ohm_data->hdd[i].temp, ohm_data->hdd[i].usage);
+                refresh_label_text(&hdd1, &strbuf);
+            }
         }
         #endif
     }
@@ -155,7 +225,7 @@ void tc_ohm_data_refresh(void *args)
         }
         else
         {
-            ESP_LOGI(TAG, "Waiting connect ti wifi");
+            ESP_LOGI(TAG, "Waiting connect to wifi");
         }
 
         vTaskDelay(pdMS_TO_TICKS(1000));

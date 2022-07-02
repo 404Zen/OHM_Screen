@@ -13,10 +13,19 @@
 
 /*Defines-------------------------------------------------------------*/
 
+typedef struct{
+    void        *label;
+    char        label_name[32];
+    int16_t     x_offset;
+    int16_t     y_offset;
+}info_label_t;
+
+
 /*Function prototypes-------------------------------------------------*/
+
 void gui_task(void *arg);
 
-void set_cpu_load_arc(int16_t val);
+void refresh_label_text(info_label_t *label, char *str);
 
 #endif /* __GUI_TASK_H__ */
 /***** END OF FILE *****/

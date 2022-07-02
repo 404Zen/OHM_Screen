@@ -21,11 +21,30 @@
 #include "encoder.h"
 
 /*Defines-------------------------------------------------------------*/
+typedef struct{
+    lv_obj_t *pc_name;                  /* Line 1 */
+    lv_obj_t *cpu_name;
+}pc_text_info_t;
+
+
 
 /* Variables --------------------------------------------------------- */
 SemaphoreHandle_t xGuiSemaphore;
 
 lv_indev_t * indev_encoder;
+
+info_label_t pc_name;
+info_label_t cpu_name;
+info_label_t cpu_clock;
+info_label_t cpu_load;
+info_label_t cpu_temp;
+info_label_t gpu_name;
+info_label_t gpu_clock;
+info_label_t gpu_load;
+info_label_t gpu_temp;
+info_label_t memory;
+info_label_t hdd0;
+info_label_t hdd1;
 /*Function prototypes-------------------------------------------------*/
 static void gui_layout(void);
 
@@ -104,32 +123,81 @@ void ui_Screen1_screen_init(void)
 
 }
 
+static void creat_new_label(info_label_t *label)
+{
+    label->label = lv_label_create(lv_scr_act());
+    lv_label_set_long_mode((lv_obj_t*)label->label, LV_LABEL_LONG_CLIP);
+    lv_label_set_text_fmt((lv_obj_t*)label->label, "%s.", label->label_name);
+    lv_obj_set_width((lv_obj_t*)label->label, 220);
+    lv_obj_align((lv_obj_t*)label->label, LV_ALIGN_TOP_LEFT, label->x_offset, label->y_offset);
+}
+
+void refresh_label_text(info_label_t *label, char *str)
+{
+    lv_label_set_text_fmt((lv_obj_t*)label->label, "%s.", str);
+}
+
 static void gui_layout(void)
 {
-    /*Create an Arc*/
-    // lv_obj_t * arc = lv_arc_create(lv_scr_act());
-    // lv_arc_set_rotation(arc, 270);
-    // lv_arc_set_bg_angles(arc, 0, 360);
-    // lv_obj_remove_style(arc, NULL, LV_PART_KNOB);   /*Be sure the knob is not displayed*/
-    // lv_obj_clear_flag(arc, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
-    // lv_obj_center(arc);
+    strcpy(pc_name.label_name, "pc name");
+    pc_name.x_offset = 10;
+    pc_name.y_offset = 0;
+    creat_new_label(&pc_name);
 
-    lv_disp_t * dispp = lv_disp_get_default();
-    lv_theme_t * theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
-                                               true, LV_FONT_DEFAULT);
-    lv_disp_set_theme(dispp, theme);
-    ui_Screen1_screen_init();
-    lv_disp_load_scr(ui_Screen1);
+    strcpy(cpu_name.label_name, "cpu_name");
+    cpu_name.x_offset = 10;
+    cpu_name.y_offset = 20;
+    creat_new_label(&cpu_name);
 
-    // lv_anim_t a;
-    // lv_anim_init(&a);
-    // lv_anim_set_var(&a, arc);
-    // lv_anim_set_exec_cb(&a, set_angle);
-    // lv_anim_set_time(&a, 1000);
-    // lv_anim_set_repeat_count(&a, LV_ANIM_REPEAT_INFINITE);    /*Just for the demo*/
-    // lv_anim_set_repeat_delay(&a, 500);
-    // lv_anim_set_values(&a, 0, 100);
-    // lv_anim_start(&a);
+    strcpy(cpu_clock.label_name, "cpu_clock");
+    cpu_clock.x_offset = 20;
+    cpu_clock.y_offset = 40;
+    creat_new_label(&cpu_clock);
+
+    strcpy(cpu_load.label_name, "cpu_load");
+    cpu_load.x_offset = 20;
+    cpu_load.y_offset = 60;
+    creat_new_label(&cpu_load);
+
+    strcpy(cpu_temp.label_name, "cpu_temp");
+    cpu_temp.x_offset = 20;
+    cpu_temp.y_offset = 80;
+    creat_new_label(&cpu_temp);
+
+    strcpy(gpu_name.label_name, "gpu_name");
+    gpu_name.x_offset = 10;
+    gpu_name.y_offset = 100;
+    creat_new_label(&gpu_name);
+
+    strcpy(gpu_clock.label_name, "gpu_clock");
+    gpu_clock.x_offset = 20;
+    gpu_clock.y_offset = 120;
+    creat_new_label(&gpu_clock);
+
+    strcpy(gpu_load.label_name, "gpu_load");
+    gpu_load.x_offset = 20;
+    gpu_load.y_offset = 140;
+    creat_new_label(&gpu_load);
+
+    strcpy(gpu_temp.label_name, "gpu_temp");
+    gpu_temp.x_offset = 20;
+    gpu_temp.y_offset = 160;
+    creat_new_label(&gpu_temp);
+
+    strcpy(memory.label_name, "memory");
+    memory.x_offset = 10;
+    memory.y_offset = 180;
+    creat_new_label(&memory);
+
+    strcpy(hdd0.label_name, "hdd0");
+    hdd0.x_offset = 10;
+    hdd0.y_offset = 200;
+    creat_new_label(&hdd0);
+
+    strcpy(hdd1.label_name, "hdd1");
+    hdd1.x_offset = 10;
+    hdd1.y_offset = 220;
+    creat_new_label(&hdd1);
 }
 
 void gui_task(void *arg)
